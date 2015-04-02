@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	[SerializeField] float Speed;
+	[SerializeField] GameObject PC_Mesh;
 
 	public Vector3[] LookAtTargets;
 
@@ -14,6 +15,8 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		//PC_Mesh.transform.localPosition = new Vector3 (0, 0, 0);
 
 		float x = Input.GetAxis ("Horizontal");
 		float z = Input.GetAxis ("Vertical");
