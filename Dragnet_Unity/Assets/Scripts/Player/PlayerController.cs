@@ -13,10 +13,7 @@ public class PlayerController : MonoBehaviour, IEditable {
         Mouse_Keys
     }
 
-    public ControlMethod ActiveControlScheme;
-
-	[SerializeField] float Speed;
-	[SerializeField] float SprintSpeed;
+    public ControlMethod ActiveControlScheme;	
     private float OriginalSpeed;
 
 	public Vector3[] LookAtTargets;
@@ -29,7 +26,7 @@ public class PlayerController : MonoBehaviour, IEditable {
 	void Start () {
 
         PC_Animation = transform.FindChild("PC_Mesh").GetComponent<Animator>();
-        OriginalSpeed = Speed;
+        OriginalSpeed = playerClass.currSpeed;
         gunLineRenderer = GetComponentInChildren<LineRenderer>();
         TurnOffLineRenderer();
 	}
@@ -61,16 +58,21 @@ public class PlayerController : MonoBehaviour, IEditable {
 
     void MovementController()
     {
-        if (Input.GetMouseButton(0))
-            Shoot();
-
-        if (Input.GetKey("left shift") || Input.GetButton("A"))
+        if (Input.GetMouseButton(0) || Input.GetAxis("R_Trigger") > 0)
         {
-            Speed = SprintSpeed;
+            Shoot();
+        }
+            
+
+        if (Input.GetKey("left shift") || Input.GetButton("A") || Input.GetButton("LAP"))
+        {
+            playerClass.currSpeed = playerClass.sprintSpeed;
+            
         }
         else
         {
-            Speed = OriginalSpeed;
+            playerClass.currSpeed = OriginalSpeed;
+            
         }
 
         float x = x = Input.GetAxis("Horizontal");
@@ -114,7 +116,7 @@ public class PlayerController : MonoBehaviour, IEditable {
              }
          }
 
-        GetComponent<Rigidbody>().velocity = new Vector3(x * Speed, 0, z * Speed);
+        GetComponent<Rigidbody>().velocity = new Vector3(x * playerClass.currSpeed, 0, z * playerClass.currSpeed);
 
         AnimationController(x,z);
     }
@@ -123,24 +125,38 @@ public class PlayerController : MonoBehaviour, IEditable {
     {
         if (X_Axis == 0 && Z_Axis == 0)
         {
-            PC_Animation.SetBool("Idle", true);
-            PC_Animation.SetBool("Walking", false);
-            PC_Animation.SetBool("Jogging", false);
-           
+            if (Input.GetMouseButton(0) || Input.GetAxis("R_Trigger") > 0)
+            {
+
+                PC_Animation.SetBool("StandingAim", true);
+                PC_Animation.SetBool("Idle", false);
+                PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("Jogging", false);
+            }
+            else
+            {
+
+                PC_Animation.SetBool("Idle", true);
+                PC_Animation.SetBool("StandingAim", false);
+                PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("Jogging", false);
+            }
         }
         else
         {
-            if (Speed == SprintSpeed)
+            if (playerClass.currSpeed == playerClass.sprintSpeed)
             {
                 PC_Animation.SetBool("Jogging", true);
                 PC_Animation.SetBool("Idle", false);
                 PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("StandingAim", false);
             }
             else
             {
                 PC_Animation.SetBool("Walking", true);
                 PC_Animation.SetBool("Idle", false);
                 PC_Animation.SetBool("Jogging", false);
+                PC_Animation.SetBool("StandingAim", false);
             }
         }
     }
@@ -152,7 +168,7 @@ public class PlayerController : MonoBehaviour, IEditable {
     {
         if (weaponClass.canFire)
         {
-            if (weaponClass.Ammo > 0)
+            if (weaponClass.ammoInClip > 0)
             {
                 RaycastHit hit;
                 Vector3 fireDirection = transform.TransformDirection(Vector3.forward);
