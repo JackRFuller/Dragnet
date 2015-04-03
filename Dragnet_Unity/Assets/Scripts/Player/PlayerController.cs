@@ -215,6 +215,20 @@ public class PlayerController : MonoBehaviour, IEditable {
         weaponClass.accuracy = _accuracy;
         weaponClass.fireRate = _fireRate;
         weaponClass.damage = _damage;
+
+        weaponClass.ammoInClip = weaponClass.clipSize;
+        weaponClass.Ammo -= weaponClass.ammoInClip;
     }
     #endregion
+
+
+    void OnGUI()
+    {
+        float rx = Screen.width / 1980f;
+        float ry = Screen.height / 1080f;
+        GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(rx, ry, 1));
+
+        GUI.contentColor = Color.yellow;
+        GUI.Box(new Rect(1800, 900, 150, 50), "Ammo: " + weaponClass.ammoInClip + " / " + weaponClass.Ammo);
+    }
 }
