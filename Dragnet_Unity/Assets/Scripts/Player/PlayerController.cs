@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour, IEditable {
 
     private Animator PC_Animation;
 
@@ -21,12 +21,17 @@ public class PlayerController : MonoBehaviour {
 
 	public Vector3[] LookAtTargets;
 
+    public WeaponClass weaponClass;
+    public PlayerClass playerClass;
+    [SerializeField] LineRenderer gunLineRenderer;
+   
 	// Use this for initialization
 	void Start () {
 
         PC_Animation = transform.FindChild("PC_Mesh").GetComponent<Animator>();
         OriginalSpeed = Speed;
-	
+        gunLineRenderer = GetComponentInChildren<LineRenderer>();
+        TurnOffLineRenderer();
 	}
 	
 	// Update is called once per frame
@@ -56,6 +61,9 @@ public class PlayerController : MonoBehaviour {
 
     void MovementController()
     {
+        if (Input.GetMouseButton(0))
+            Shoot();
+
         if (Input.GetKey("left shift") || Input.GetButton("A"))
         {
             Speed = SprintSpeed;
@@ -103,8 +111,7 @@ public class PlayerController : MonoBehaviour {
                         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
                     }
                 }
-                
-            }
+             }
          }
 
         GetComponent<Rigidbody>().velocity = new Vector3(x * Speed, 0, z * Speed);
@@ -138,5 +145,76 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-	
+
+    #region Shooting Methods
+
+    private void Shoot()
+    {
+        if (weaponClass.canFire)
+        {
+            if (weaponClass.Ammo > 0)
+            {
+                RaycastHit hit;
+                Vector3 fireDirection = transform.TransformDirection(Vector3.forward);
+                weaponClass.canFire = false;
+                weaponClass.ammoInClip -= 1;
+
+                if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
+                {
+                    InitLineRenderer(hit.point);
+
+                    if (weaponClass.hitParticle != null)
+                    {
+                        GameObject hitEffect;
+                        hitEffect = Instantiate(weaponClass.hitParticle, hit.point, transform.rotation) as GameObject;
+                    }
+                }
+                else
+                {
+                    InitLineRenderer(transform.TransformDirection(Vector3.forward) * weaponClass.range);
+                }
+
+                StartCoroutine(weaponClass.Cooldown());
+            }
+            else
+            {
+                Reload();
+            }
+        }
+        else
+        {
+            TurnOffLineRenderer();
+        }
+    }
+
+    private void Reload()
+    {
+        weaponClass.Reload();
+    }
+    private void InitLineRenderer(Vector3 _hitPoint)
+    {
+        gunLineRenderer.enabled = true;
+        gunLineRenderer.SetPosition(0, transform.position);
+        gunLineRenderer.SetPosition(1, _hitPoint);
+    }
+    private void TurnOffLineRenderer()
+    {
+        gunLineRenderer.SetPosition(1, transform.position);
+        gunLineRenderer.SetPosition(0, transform.position);
+        gunLineRenderer.enabled = false;
+    }
+    #endregion
+
+    #region Interfaces
+    public void EditWeapon(int _ammo, int _maxAmmo, int _clipSize, float _range, float _accuracy, float _fireRate, int _damage)
+    {
+        weaponClass.Ammo = _ammo;
+        weaponClass.maxAmmo = _maxAmmo;
+        weaponClass.clipSize = _clipSize;
+        weaponClass.range = _range;
+        weaponClass.accuracy = _accuracy;
+        weaponClass.fireRate = _fireRate;
+        weaponClass.damage = _damage;
+    }
+    #endregion
 }
