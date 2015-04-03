@@ -88,28 +88,24 @@ public class PlayerController : MonoBehaviour {
             float screenX = Screen.width;
             float screenY = Screen.height;
 
-            //Debug.Log(Screen.width);
-            //Debug.Log(Screen.height);
-
-            Debug.Log(Input.mousePosition.x);
-
             if ((mouseX > 0 || mouseX < screenX) && (mouseY > 0 || mouseX < screenY))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-
-                Physics.Raycast(ray, out hit);
-
-                if (hit.collider.gameObject.tag == "Terrain")
-                {                   
-                    Vector3 _target = hit.point;
-                    _target.y += 0.5F;
-                    transform.rotation = Quaternion.LookRotation(new Vector3(_target.x,0,_target.z));
+                //Debug.DrawRay(ray.origin, ray.direction * 20, Color.red);
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if (hit.collider.gameObject.tag == "Terrain")
+                    {
+                        Vector3 _target = hit.point - transform.position;
+                        _target.y += 0.5F;
+                        transform.rotation = Quaternion.LookRotation(_target.normalized);
+                        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+                    }
                 }
+                
             }
-               
-            
-        }
+         }
 
         GetComponent<Rigidbody>().velocity = new Vector3(x * Speed, 0, z * Speed);
 
