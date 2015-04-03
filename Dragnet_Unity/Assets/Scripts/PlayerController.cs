@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour {
 
     void MovementController()
     {
-        if (Input.GetKey("left shift") || Input.GetButton("A"))
+        if (Input.GetKey("left shift") || Input.GetButton("A") || Input.GetButton("LAP"))
         {
             Speed = SprintSpeed;
         }
@@ -67,6 +67,8 @@ public class PlayerController : MonoBehaviour {
 
         float x = x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+
+        
 
         if (ActiveControlScheme == ControlMethod.Keyboard || ActiveControlScheme == ControlMethod.SingleStick)
         {           
@@ -116,10 +118,22 @@ public class PlayerController : MonoBehaviour {
     {
         if (X_Axis == 0 && Z_Axis == 0)
         {
-            PC_Animation.SetBool("Idle", true);
-            PC_Animation.SetBool("Walking", false);
-            PC_Animation.SetBool("Jogging", false);
-           
+            if (Input.GetMouseButton(0) || Input.GetAxis("R_Trigger") > 0)
+            {
+                
+                PC_Animation.SetBool("StandingAim", true);
+                PC_Animation.SetBool("Idle", false);
+                PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("Jogging", false);
+            }
+            else
+            {
+               
+                PC_Animation.SetBool("Idle", true);
+                PC_Animation.SetBool("StandingAim", false);
+                PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("Jogging", false);
+            }
         }
         else
         {
@@ -128,12 +142,14 @@ public class PlayerController : MonoBehaviour {
                 PC_Animation.SetBool("Jogging", true);
                 PC_Animation.SetBool("Idle", false);
                 PC_Animation.SetBool("Walking", false);
+                PC_Animation.SetBool("StandingAim", false);
             }
             else
             {
                 PC_Animation.SetBool("Walking", true);
                 PC_Animation.SetBool("Idle", false);
                 PC_Animation.SetBool("Jogging", false);
+                PC_Animation.SetBool("StandingAim", false);
             }
         }
     }
