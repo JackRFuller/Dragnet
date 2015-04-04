@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, IEditable {
     public WeaponClass weaponClass;
     public PlayerClass playerClass;
     [SerializeField] LineRenderer gunLineRenderer;
+    [SerializeField] GameObject lineRendererObject;
    
 	// Use this for initialization
 	void Start () {
@@ -62,6 +63,10 @@ public class PlayerController : MonoBehaviour, IEditable {
         {
             Shoot();
         }
+        else
+        {
+            TurnOffLineRenderer();
+        }
             
 
         if (Input.GetKey("left shift") || Input.GetButton("A") || Input.GetButton("LAP"))
@@ -102,13 +107,13 @@ public class PlayerController : MonoBehaviour, IEditable {
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                //Debug.DrawRay(ray.origin, ray.direction * 20, Color.red);
+               
                 if (Physics.Raycast(ray, out hit))
                 {
                     if (hit.collider.gameObject.tag == "Terrain")
                     {
                         Vector3 _target = hit.point - transform.position;
-                        _target.y += 0.5F;
+                        _target.y = transform.position.y;
                         transform.rotation = Quaternion.LookRotation(_target.normalized);
                         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
                     }
@@ -171,11 +176,11 @@ public class PlayerController : MonoBehaviour, IEditable {
             if (weaponClass.ammoInClip > 0)
             {
                 RaycastHit hit;
-                Vector3 fireDirection = transform.TransformDirection(Vector3.forward);
+                Vector3 fireDirection =  lineRendererObject.transform.TransformDirection(Vector3.forward);
                 weaponClass.canFire = false;
                 weaponClass.ammoInClip -= 1;
 
-                if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
+                if (Physics.Raycast(lineRendererObject.transform.position, fireDirection * weaponClass.range, out hit))
                 {
                     InitLineRenderer(hit.point);
 
@@ -210,13 +215,13 @@ public class PlayerController : MonoBehaviour, IEditable {
     private void InitLineRenderer(Vector3 _hitPoint)
     {
         gunLineRenderer.enabled = true;
-        gunLineRenderer.SetPosition(0, transform.position);
+        gunLineRenderer.SetPosition(0, lineRendererObject.transform.position);
         gunLineRenderer.SetPosition(1, _hitPoint);
     }
     private void TurnOffLineRenderer()
     {
         gunLineRenderer.SetPosition(1, transform.position);
-        gunLineRenderer.SetPosition(0, transform.position);
+        gunLineRenderer.SetPosition(0, lineRendererObject.transform.position);
         gunLineRenderer.enabled = false;
     }
     #endregion
