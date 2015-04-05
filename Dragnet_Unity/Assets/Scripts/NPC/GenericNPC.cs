@@ -12,12 +12,32 @@ public class GenericNPC : NpcClass, ITakeDamage {
 
     public void Update()
     {
-        navMesh.SetDestination(Player.transform.position);
+        bool canSeePC = CanSeePlayer(transform.position, Player);
+
+        if (canSeePC)
+        {
+            if (Vector3.Distance(transform.position, Player.transform.position) < loseRange)
+            {
+                navMesh.SetDestination(Player.transform.position);
+            }
+            else
+            {
+                Patrol();
+            }
+        }
+        else
+        {
+            Patrol();
+        }
     }
 
     public void TakeDamage(int _damage)
     {
         health -= _damage;
+        GetComponentInChildren<TextMesh>().text = "" + health;
+
+        if (health <= 0)
+            Destroy(gameObject);
     }
 	
 }

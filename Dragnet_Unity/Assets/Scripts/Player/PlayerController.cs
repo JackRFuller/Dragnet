@@ -193,6 +193,13 @@ public class PlayerController : MonoBehaviour, IEditable {
                         GameObject hitEffect;
                         hitEffect = Instantiate(weaponClass.hitParticle, hit.point, transform.rotation) as GameObject;
                     }
+
+                    var takeDamage = (ITakeDamage)hit.collider.gameObject.GetComponent(typeof(ITakeDamage));
+
+                    if (takeDamage != null)
+                    {
+                        takeDamage.TakeDamage(weaponClass.damage);
+                    }
                 }
                 else
                 {
