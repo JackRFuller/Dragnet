@@ -180,6 +180,10 @@ public class PlayerController : MonoBehaviour, IEditable {
                 weaponClass.canFire = false;
                 weaponClass.ammoInClip -= 1;
 
+                fireDirection.x += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
+                fireDirection.y += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
+
+
                 if (Physics.Raycast(lineRendererObject.transform.position, fireDirection * weaponClass.range, out hit))
                 {
                     InitLineRenderer(hit.point);

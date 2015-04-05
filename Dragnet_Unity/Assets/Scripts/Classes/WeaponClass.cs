@@ -24,6 +24,7 @@ public class WeaponClass
     public int clipSize;
     public int ammoInClip;
     public float range;
+    [Range(0, 0.2f)]
     public float accuracy;
     public float fireRate;
     public int damage;
