@@ -84,8 +84,9 @@ public class PlayerController : MonoBehaviour, IEditable {
         float z = Input.GetAxis("Vertical");
 
         if (ActiveControlScheme == ControlMethod.Keyboard || ActiveControlScheme == ControlMethod.SingleStick)
-        {           
-            transform.rotation = Quaternion.LookRotation(new Vector3(x, 0, z));
+        {   
+            if(x > 0 || z > 0)
+                transform.rotation = Quaternion.LookRotation(new Vector3(x, 0, z));
         }
 
         if (ActiveControlScheme == ControlMethod.TwinStick)
