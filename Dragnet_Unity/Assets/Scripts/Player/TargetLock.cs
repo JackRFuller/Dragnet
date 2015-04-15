@@ -9,6 +9,7 @@ public class TargetLock : MonoBehaviour {
     [SerializeField] List<GameObject> npcList = new List<GameObject>();
     public List<GameObject> npcsInView = new List<GameObject>();
     [SerializeField] GameObject pcTarget;
+    public static GameObject staticPCStarget;
     [SerializeField] List<GameObject> npcLocalPositions = new List<GameObject>();
 
     private int index = 0;
@@ -44,14 +45,22 @@ public class TargetLock : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+
         DetectInput();
         AimAtTarget();
+        TargetLock.staticPCStarget = pcTarget;
+
 
 	}
 
     private void DetectInput()
     {
         float rStickInput = Input.GetAxis("R_Horizontal");
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            NextTarget(true);
+        }
 
         if (rStickInput > -0.1f && rStickInput < 0.1f)
         {
@@ -99,6 +108,7 @@ public class TargetLock : MonoBehaviour {
             else
                 listIndex--;
 
+            
             pcTarget = npcsInView[listIndex].gameObject;
             lockOnObject.transform.position = npcsInView[listIndex].transform.position;
         }
@@ -112,25 +122,31 @@ public class TargetLock : MonoBehaviour {
             for (int i = 0; i < npcsInView.Count; i++)
             {
                 float sqrMag1 = (npcsInView[i + 0].transform.position - transform.position).sqrMagnitude;
-                float sqrMag2 = (npcsInView[i + 1].transform.position - transform.position).sqrMagnitude;
 
-                if (sqrMag2 < sqrMag1)
+                if ((i + 1) < npcsInView.Count-1)
                 {
-                    GameObject tempStore = npcsInView[i];
-                    npcsInView[i] = npcsInView[i + 1];
-                    npcsInView[i + 1] = tempStore;
-                    i = 0;
-                }
-            }
+                    float sqrMag2 = (npcsInView[i + 1].transform.position - transform.position).sqrMagnitude;
 
-            
+                    if (sqrMag2 < sqrMag1)
+                    {
+                        GameObject tempStore = npcsInView[i];
+                        npcsInView[i] = npcsInView[i + 1];
+                        npcsInView[i + 1] = tempStore;
+                        i = 0;
+                    }
+                }
+            }            
         }
     }
 
     private void ToLeftOfTarget()
     {
         if (pcTarget == null)
+        {
+            SortByDistance();
+            pcTarget = npcsInView[0].gameObject;
             return;
+        }
 
         npcLocalPositions.Clear();
 
@@ -153,7 +169,11 @@ public class TargetLock : MonoBehaviour {
     private void ToRightOfTarget()
     {
         if (pcTarget == null)
+        {
+            SortByDistance();
+            pcTarget = npcsInView[0].gameObject;
             return;
+        }
 
         npcLocalPositions.Clear();
 
@@ -201,6 +221,7 @@ public class TargetLock : MonoBehaviour {
         }
 
     }
+
     private void SortListLeft()
     {
         for (int i = 0; i < npcLocalPositions.Count; i++)

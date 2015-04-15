@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour, IEditable {
     public PlayerClass playerClass;
     [SerializeField] LineRenderer gunLineRenderer;
     [SerializeField] GameObject lineRendererObject;
+    [SerializeField] GameObject Mesh;
+
+    public LayerMask shootingLayer;
    
 	// Use this for initialization
 	void Start () {
@@ -36,9 +39,7 @@ public class PlayerController : MonoBehaviour, IEditable {
 	void Update () {
 
         MovementController();
-
         SwitchControlScheme();
-
 	}
 
     void SwitchControlScheme()
@@ -80,12 +81,12 @@ public class PlayerController : MonoBehaviour, IEditable {
             
         }
 
-        float x = x = Input.GetAxis("Horizontal");
+        float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         if (ActiveControlScheme == ControlMethod.Keyboard || ActiveControlScheme == ControlMethod.SingleStick)
         {   
-            if(x > 0 || z > 0)
+            //if(x != 0 || z != 0)
                 transform.rotation = Quaternion.LookRotation(new Vector3(x, 0, z));
         }
 
@@ -94,7 +95,7 @@ public class PlayerController : MonoBehaviour, IEditable {
             float Rot_X = Input.GetAxis("R_Horizontal");
             float Rot_Z = Input.GetAxis("R_Vertical");
 
-            transform.rotation = Quaternion.LookRotation(new Vector3(Rot_X, 0, -Rot_Z));
+            transform.rotation = Quaternion.LookRotation(new Vector3(Rot_X, transform.rotation.eulerAngles.y, -Rot_Z));
         }
 
         if (ActiveControlScheme == ControlMethod.Mouse_Keys)
@@ -177,15 +178,23 @@ public class PlayerController : MonoBehaviour, IEditable {
             if (weaponClass.ammoInClip > 0)
             {
                 RaycastHit hit;
-                Vector3 fireDirection =  lineRendererObject.transform.TransformDirection(Vector3.forward);
+                Vector3 fireDirection;
+
+                if (TargetLock.staticPCStarget != null)
+                    fireDirection = TargetLock.staticPCStarget.transform.position - transform.position;              
+                else
+                    fireDirection = transform.TransformDirection(Vector3.forward);
+                
+
                 weaponClass.canFire = false;
                 weaponClass.ammoInClip -= 1;
 
                 fireDirection.x += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
                 fireDirection.y += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
+                fireDirection.z += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
 
 
-                if (Physics.Raycast(lineRendererObject.transform.position, fireDirection * weaponClass.range, out hit))
+                if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
                 {
                     InitLineRenderer(hit.point);
 
@@ -227,13 +236,13 @@ public class PlayerController : MonoBehaviour, IEditable {
     private void InitLineRenderer(Vector3 _hitPoint)
     {
         gunLineRenderer.enabled = true;
-        gunLineRenderer.SetPosition(0, lineRendererObject.transform.position);
+        gunLineRenderer.SetPosition(0, transform.position);
         gunLineRenderer.SetPosition(1, _hitPoint);
     }
     private void TurnOffLineRenderer()
     {
         gunLineRenderer.SetPosition(1, transform.position);
-        gunLineRenderer.SetPosition(0, lineRendererObject.transform.position);
+        gunLineRenderer.SetPosition(0, transform.position);
         gunLineRenderer.enabled = false;
     }
     #endregion
