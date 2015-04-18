@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour, IEditable {
+public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
 
     private Animator PC_Animation;
 
@@ -19,11 +20,13 @@ public class PlayerController : MonoBehaviour, IEditable {
 	public Vector3[] LookAtTargets;
 
     public WeaponClass weaponClass;
-    public PlayerClass playerClass;
+    public PlayerClass playerClass = new PlayerClass(100, 100, 100);
     [SerializeField] LineRenderer gunLineRenderer;
     [SerializeField] GameObject lineRendererObject;
     [SerializeField] GameObject Mesh;
-
+    [SerializeField] Text shieldText;
+    [SerializeField] Text manaText;
+    [SerializeField] Text healthText;
     public LayerMask shootingLayer;
    
 	// Use this for initialization
@@ -40,7 +43,28 @@ public class PlayerController : MonoBehaviour, IEditable {
 
         MovementController();
         SwitchControlScheme();
+        ManagePlayerSystems();
 	}
+
+
+    private void ManagePlayerSystems()
+    {
+        if (playerClass.canChargeMana || playerClass.canChargeShield)
+        {
+            playerClass.RechargeManager(playerClass.shieldRechargeAmount, playerClass.manaRechargeAmount);
+
+            if (!playerClass.canChargeMana)
+                StartCoroutine(playerClass.RechargeManaDelay());
+
+            if (!playerClass.canChargeShield)
+                StartCoroutine(playerClass.RechargeShieldDelay());
+
+            shieldText.text = "Shield: " + playerClass.Shield;
+            manaText.text = "Mana: " + playerClass.Mana;
+        }
+
+        //Debug.Log("PLAYER SHIELD: " + playerClass.Shield + "  Player Mana: " + playerClass.Mana);
+    }
 
     void SwitchControlScheme()
     {
@@ -260,6 +284,12 @@ public class PlayerController : MonoBehaviour, IEditable {
 
         weaponClass.ammoInClip = weaponClass.clipSize;
         weaponClass.Ammo -= weaponClass.ammoInClip;
+    }
+
+    public void TakeDamage(int _damage)
+    {
+        playerClass.DoDamage(_damage);
+        healthText.text = "Health: " + playerClass.Health;
     }
     #endregion
 

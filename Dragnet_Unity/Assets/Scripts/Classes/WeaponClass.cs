@@ -4,6 +4,14 @@ using System.Collections;
 [System.Serializable]
 public class WeaponClass 
 {
+    public enum WeaponType
+    {
+        SingleShot,
+        Spray,
+        Sniper
+    }
+    public WeaponType weaponType;
+    
     [Header("Weapon Modifyers")]
     private int ammo;
     public int Ammo
@@ -28,6 +36,10 @@ public class WeaponClass
     public float accuracy;
     public float fireRate;
     public int damage;
+
+    [Header("Shotgun Variables")]
+    public float sprayRadius;
+    public float shots;
 
     [Header("Graphics/Audio")]
     public Mesh weaponMesh;
