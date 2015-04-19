@@ -39,7 +39,7 @@ public class WeaponClass
 
     [Header("Shotgun Variables")]
     public float sprayRadius;
-    public float shots;
+    public int shots;
 
     [Header("Graphics/Audio")]
     public Mesh weaponMesh;

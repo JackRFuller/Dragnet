@@ -202,45 +202,78 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
             if (weaponClass.ammoInClip > 0)
             {
                 RaycastHit hit;
-                Vector3 fireDirection;
+                Vector3 fireDirection = Vector3.zero;
 
                 if (TargetLock.staticPCStarget != null)
                     fireDirection = TargetLock.staticPCStarget.transform.position - transform.position;              
                 else
                     fireDirection = transform.TransformDirection(Vector3.forward);
                 
-
                 weaponClass.canFire = false;
-                weaponClass.ammoInClip -= 1;
 
-                fireDirection.x += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
-                fireDirection.y += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
-                fireDirection.z += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
-
-
-                if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
+                if (weaponClass.weaponType != WeaponClass.WeaponType.Spray)
                 {
-                    InitLineRenderer(hit.point);
+                    weaponClass.ammoInClip -= 1;
+                    fireDirection.x += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
+                    fireDirection.y += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
+                    fireDirection.z += Random.Range(-weaponClass.accuracy, weaponClass.accuracy);
 
-                    if (weaponClass.hitParticle != null)
+                    if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
                     {
-                        GameObject hitEffect;
-                        hitEffect = Instantiate(weaponClass.hitParticle, hit.point, transform.rotation) as GameObject;
+                        InitLineRenderer(hit.point);
+
+                        if (weaponClass.hitParticle != null)
+                        {
+                            GameObject hitEffect;
+                            hitEffect = Instantiate(weaponClass.hitParticle, hit.point, transform.rotation) as GameObject;
+                        }
+
+                        var takeDamage = (ITakeDamage)hit.collider.gameObject.GetComponent(typeof(ITakeDamage));
+
+                        if (takeDamage != null)
+                        {
+                            takeDamage.TakeDamage(weaponClass.damage);
+                        }
+                    }
+                    else
+                    {
+                        InitLineRenderer(transform.TransformDirection(Vector3.forward) * weaponClass.range);
                     }
 
-                    var takeDamage = (ITakeDamage)hit.collider.gameObject.GetComponent(typeof(ITakeDamage));
-
-                    if (takeDamage != null)
-                    {
-                        takeDamage.TakeDamage(weaponClass.damage);
-                    }
+                    StartCoroutine(weaponClass.Cooldown());
                 }
                 else
                 {
-                    InitLineRenderer(transform.TransformDirection(Vector3.forward) * weaponClass.range);
-                }
+                    weaponClass.ammoInClip -= 1;
+                    
+                    for (int i = 0; i < weaponClass.shots; i++)
+                    {                       
+                        fireDirection = transform.TransformDirection(Vector3.forward);
+                        fireDirection.x += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
+                        fireDirection.y += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
+                        fireDirection.z += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
 
-                StartCoroutine(weaponClass.Cooldown());
+                        if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
+                        {
+                            InitLineRenderer(hit.point);
+
+                            if (weaponClass.hitParticle != null)
+                            {
+                                GameObject hitEffect;
+                                hitEffect = Instantiate(weaponClass.hitParticle, hit.point, transform.rotation) as GameObject;
+                            }
+
+                            var takeDamage = (ITakeDamage)hit.collider.gameObject.GetComponent(typeof(ITakeDamage));
+
+                            if (takeDamage != null)
+                            {
+                                takeDamage.TakeDamage(weaponClass.damage);
+                            }
+                        }
+                    }
+
+                    StartCoroutine(weaponClass.Cooldown());
+                }
             }
             else
             {
@@ -272,7 +305,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     #endregion
 
     #region Interfaces
-    public void EditWeapon(int _ammo, int _maxAmmo, int _clipSize, float _range, float _accuracy, float _fireRate, int _damage)
+    public void EditWeapon(int _ammo, int _maxAmmo, int _clipSize, float _range, float _accuracy, float _fireRate, int _damage, WeaponClass.WeaponType _weaponType, int _shots, float _sprayRadius)
     {
         weaponClass.Ammo = _ammo;
         weaponClass.maxAmmo = _maxAmmo;
@@ -281,9 +314,11 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         weaponClass.accuracy = _accuracy;
         weaponClass.fireRate = _fireRate;
         weaponClass.damage = _damage;
-
+        weaponClass.weaponType = _weaponType;
         weaponClass.ammoInClip = weaponClass.clipSize;
         weaponClass.Ammo -= weaponClass.ammoInClip;
+        weaponClass.shots = _shots;
+        weaponClass.sprayRadius = _sprayRadius;
     }
 
     public void TakeDamage(int _damage)
@@ -294,6 +329,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     #endregion
 
 
+    
     void OnGUI()
     {
         float rx = Screen.width / 1980f;
