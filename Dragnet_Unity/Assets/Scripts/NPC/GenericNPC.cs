@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GenericNPC : NpcClass, ITakeDamage {
 
+    bool targetSet;
 
     public void Start()
     {
@@ -12,23 +13,37 @@ public class GenericNPC : NpcClass, ITakeDamage {
 
     public void Update()
     {
-        bool canSeePC = CanSeePlayer(transform.position, Player);
-
-        if (canSeePC)
+        if (!pcSighted)
         {
-            if (Vector3.Distance(transform.position, Player.transform.position) < loseRange)
+            bool canSeePC = CanSeePlayer(gameObject, transform.position, Player);
+
+            if (canSeePC)
             {
-                navMesh.SetDestination(Player.transform.position);
+                pcSighted = true;
             }
-            else
-            {
-                Patrol();
-            }
+
+            Patrol(gameObject);
         }
         else
         {
-            Patrol();
+            float _distance = Vector3.Distance(transform.position, Player.transform.position);
+            bool canAttack = CanAttack(Player, gameObject, loseRange, attackRange);
+
+            if (!canAttack)
+            {
+                navMesh.Resume();
+                navMesh.SetDestination(Player.transform.position);                  
+            }
+            else
+            {
+                navMesh.Stop();
+                Attack(gameObject, Player);
+            }
+
+            if (_distance > loseRange)
+                pcSighted = false;
         }
+
     }
 
     public void TakeDamage(int _damage)
@@ -39,5 +54,8 @@ public class GenericNPC : NpcClass, ITakeDamage {
         if (health <= 0)
             Destroy(gameObject);
     }
+
+
+
 	
 }

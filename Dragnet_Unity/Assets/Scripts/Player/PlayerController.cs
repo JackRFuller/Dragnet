@@ -251,7 +251,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
                         fireDirection = transform.TransformDirection(Vector3.forward);
                         fireDirection.x += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
                         fireDirection.y += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
-                        fireDirection.z += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
+                       // fireDirection.z += Random.Range(-weaponClass.sprayRadius, weaponClass.sprayRadius);
 
                         if (Physics.Raycast(transform.position, fireDirection * weaponClass.range, out hit))
                         {
