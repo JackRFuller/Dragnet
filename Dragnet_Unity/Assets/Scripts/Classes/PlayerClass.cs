@@ -10,6 +10,7 @@ public class PlayerClass
     public int shieldRechargeAmount;
     public int manaRechargeAmount;
     public float RechargeTimer;
+    public float ShieldRechargeTime;
     protected int health;
     public int Health
     {
@@ -36,6 +37,7 @@ public class PlayerClass
                 shield = 100;
             if (shield < 0)
                 shield = 0;
+
             return shield;
         }
         set
@@ -73,7 +75,7 @@ public class PlayerClass
     }
 
     #region Recharge Methods
-    public void RechargeManager(int _shieldAmount, int _manaAmount)
+    public void RechargeShieldCall(int _shieldAmount)
     {
         if (canChargeShield)
         {
@@ -81,7 +83,10 @@ public class PlayerClass
             RechargeShield(_shieldAmount);
            
         }
+    }
 
+    public void RechargeManaCall(int _manaAmount)
+    {
         if (canChargeMana)
         {
             canChargeMana = false;
@@ -91,7 +96,7 @@ public class PlayerClass
 
     public IEnumerator RechargeShieldDelay()
     {
-        yield return new WaitForSeconds(RechargeTimer);
+        yield return new WaitForSeconds(ShieldRechargeTime);
         canChargeShield = true;
     }
 
@@ -135,7 +140,7 @@ public class PlayerClass
 
     public void DoDamage(int _damage)
     {
-        if (Shield <= 0)
+        if (Shield == 0)
             Health -= _damage;
         else
             Shield -= _damage;

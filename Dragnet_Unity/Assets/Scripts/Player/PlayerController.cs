@@ -49,21 +49,30 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
 
     private void ManagePlayerSystems()
     {
-        if (playerClass.canChargeMana || playerClass.canChargeShield)
+        if (playerClass.canChargeShield)
         {
-            playerClass.RechargeManager(playerClass.shieldRechargeAmount, playerClass.manaRechargeAmount);
-
-            if (!playerClass.canChargeMana)
-                StartCoroutine(playerClass.RechargeManaDelay());
+            playerClass.RechargeShieldCall(playerClass.shieldRechargeAmount);
 
             if (!playerClass.canChargeShield)
                 StartCoroutine(playerClass.RechargeShieldDelay());
 
             shieldText.text = "Shield: " + playerClass.Shield;
-            manaText.text = "Mana: " + playerClass.Mana;
+
         }
 
-        //Debug.Log("PLAYER SHIELD: " + playerClass.Shield + "  Player Mana: " + playerClass.Mana);
+        if (playerClass.canChargeMana)
+        {
+            if (playerClass.canChargeMana)
+            {
+                playerClass.RechargeManaCall(playerClass.manaRechargeAmount);
+
+                if (!playerClass.canChargeMana)
+                    StartCoroutine(playerClass.RechargeManaDelay());
+            }
+
+            manaText.text = "Mana: " + playerClass.Mana;
+        }
+        
     }
 
     void SwitchControlScheme()
@@ -325,6 +334,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     {
         playerClass.DoDamage(_damage);
         healthText.text = "Health: " + playerClass.Health;
+        shieldText.text = "Shield: " + playerClass.Shield;
     }
     #endregion
 

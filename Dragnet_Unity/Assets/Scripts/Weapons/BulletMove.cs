@@ -5,7 +5,7 @@ public class BulletMove : MonoBehaviour {
 
     Rigidbody bulletRigidbody;
     public float speed;
-    public float damage;
+    public int damage;
     public float lifeTime;
 	// Use this for initialization
 	void Start () {
@@ -14,9 +14,16 @@ public class BulletMove : MonoBehaviour {
         bulletRigidbody.velocity = transform.TransformDirection(0, 0, speed);
         Destroy(gameObject, lifeTime);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    void OnCollisionEnter(Collision hit)
+    {
+        var takeDamage = (ITakeDamage)hit.collider.gameObject.GetComponent(typeof(ITakeDamage));
+
+        if (takeDamage != null)
+        {
+            takeDamage.TakeDamage(damage);
+        }
+
+        Destroy(gameObject);
+    }
 }
