@@ -52,7 +52,10 @@ public class GenericNPC : NpcClass, ITakeDamage {
         GetComponentInChildren<TextMesh>().text = "" + health;
 
         if (health <= 0)
+        {
+            Player.GetComponent<TargetLockV2>().npcsInView.Remove(gameObject);
             Destroy(gameObject);
+        }
     }
 
 

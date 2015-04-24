@@ -3,6 +3,14 @@ using System.Collections;
 
 public class NpcClass : MonoBehaviour
 {
+    public enum Behaviours
+    {
+        Idle,
+        Aggressive,
+        Enraged
+    }
+    public Behaviours npcBehaviours;
+
     [Header("How Far The NPC Can See")]
     public float sightRange;
     [Header("When the NPC will lose interested once in chase")]

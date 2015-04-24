@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         PC_Animation = transform.FindChild("PC_Mesh").GetComponent<Animator>();
         OriginalSpeed = playerClass.currSpeed;
         gunLineRenderer = GetComponentInChildren<LineRenderer>();
+        PlayerClass.LineOfSight = playerClass.lineOfSight;
+        DistanceLogger.range = PlayerClass.LineOfSight;
         TurnOffLineRenderer();
 	}
 	
@@ -213,8 +215,8 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
                 RaycastHit hit;
                 Vector3 fireDirection = Vector3.zero;
 
-                if (TargetLock.staticPCStarget != null)
-                    fireDirection = TargetLock.staticPCStarget.transform.position - transform.position;              
+                if (TargetLockV2.Target != null)
+                    fireDirection = TargetLockV2.Target.transform.position - transform.position;              
                 else
                     fireDirection = transform.TransformDirection(Vector3.forward);
                 
@@ -246,7 +248,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
                     }
                     else
                     {
-                        InitLineRenderer(transform.TransformDirection(Vector3.forward) * weaponClass.range);
+                        //InitLineRenderer(transform.TransformDirection(Vector3.forward) * weaponClass.range);
                     }
 
                     StartCoroutine(weaponClass.Cooldown());
@@ -301,15 +303,15 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     }
     private void InitLineRenderer(Vector3 _hitPoint)
     {
-        gunLineRenderer.enabled = true;
-        gunLineRenderer.SetPosition(0, transform.position);
-        gunLineRenderer.SetPosition(1, _hitPoint);
+        //gunLineRenderer.enabled = true;
+        //gunLineRenderer.SetPosition(0, transform.position);
+        //gunLineRenderer.SetPosition(1, _hitPoint);
     }
     private void TurnOffLineRenderer()
     {
-        gunLineRenderer.SetPosition(1, transform.position);
-        gunLineRenderer.SetPosition(0, transform.position);
-        gunLineRenderer.enabled = false;
+        //gunLineRenderer.SetPosition(1, transform.position);
+        //gunLineRenderer.SetPosition(0, transform.position);
+        //gunLineRenderer.enabled = false;
     }
     #endregion
 

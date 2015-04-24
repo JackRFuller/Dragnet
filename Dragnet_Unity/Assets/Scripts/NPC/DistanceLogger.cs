@@ -3,16 +3,15 @@ using System.Collections;
 
 public class DistanceLogger : MonoBehaviour {
 
-    public float range;
+    public static float range;
     [SerializeField] GameObject PC;
-    TargetLock targetLock;
+    TargetLockV2 targetLock;
     bool added = false;
 	// Use this for initialization
 	void Start () {
 
         PC = GameObject.FindGameObjectWithTag("Player");
-        targetLock = PC.GetComponent<TargetLock>();
-	
+        targetLock = PC.GetComponent<TargetLockV2>();	
 	}
 	
 	// Update is called once per frame

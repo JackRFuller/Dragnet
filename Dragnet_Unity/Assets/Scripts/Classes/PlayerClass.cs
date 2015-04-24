@@ -67,6 +67,9 @@ public class PlayerClass
     [HideInInspector]
     public bool canChargeMana = true;
 
+    public float lineOfSight;
+    public static float LineOfSight;
+
     public PlayerClass(int _mana, int _shield, int _health)
     {
         Mana = _mana;
