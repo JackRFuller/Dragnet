@@ -6,8 +6,10 @@ using System;
 public class TargetLockV2 : MonoBehaviour {
 
     public List<GameObject> npcsInView = new List<GameObject>();
-    public List<GameObject> npcLocalPositions = new List<GameObject>();
+    public GameObject[] npcsToArray;
     public static GameObject Target;
+    public GameObject tempTarget;
+    [SerializeField] GameObject target;
     [SerializeField] GameObject lockOnObj;
 
 
@@ -28,20 +30,22 @@ public class TargetLockV2 : MonoBehaviour {
     {
         if (npcsInView.Count > 0)
         {
-            Target = npcsInView[0];
-
             if (LockSelection == LockSystem.Select)
                 ManageInput();
             else
-                npcsInView.Sort(SortListByDistance);
+            {
+                if (Input.GetButtonDown("RAP") || Input.GetKeyDown(KeyCode.Tab))
+                {
+                    HandleTargetCycle();
+                }
+            }
 
-            if (lockOnObj != null)
-                lockOnObj.transform.position = Target.transform.position;
+            if (lockOnObj != null && TargetLockV2.Target != null)
+                lockOnObj.transform.position = TargetLockV2.Target.transform.position;
         }
         else
         {
-            Target = null;
-
+            TargetLockV2.Target = null;
             if (lockOnObj != null)
                 lockOnObj.transform.position = new Vector3(1000f, 1000f, 1000f);
         }
@@ -71,25 +75,36 @@ public class TargetLockV2 : MonoBehaviour {
         AimAtTarget();
     }
 
+    private void HandleTargetCycle()
+    {
+        if (TargetLockV2.Target == null)
+        {
+            npcsInView.Sort(SortListByDistance);
+            TargetLockV2.Target = npcsInView[0];
+            target = TargetLockV2.Target;
+        }
+        else
+            TargetLockV2.Target = null;
+    }
+
     private void AimAtTarget()
     {
         if (flickRight && stickReset)
-        {
-            SortRight();
-            //NextTarget(true);
+        {         
             stickReset = false;
+            SortRight();
         }
         else if (flickLeft && stickReset)
         {
-            SortLeft();
-            // NextTarget(false);
             stickReset = false;
+            SortLeft();
+           
         }
     }
 
     private void SortRight()
     {
-        npcsInView.Sort(SortToRight);
+       npcsInView.Sort(SortToRight);
     }
 
     private void SortLeft()
@@ -115,7 +130,6 @@ public class TargetLockV2 : MonoBehaviour {
             return 0;
     }
 
-
     int SortToRight(GameObject obj1, GameObject obj2)
     {
         if (obj1 != null && obj2 != null)
@@ -129,10 +143,9 @@ public class TargetLockV2 : MonoBehaviour {
                 return -1;
             else
                 return 0;
-
         }
         else
-            return 0;
+            return -2;
     }
 
     int SortToLeft(GameObject obj1, GameObject obj2)
@@ -151,6 +164,6 @@ public class TargetLockV2 : MonoBehaviour {
 
         }
         else
-            return 0;
+            return -2;
     }
 }

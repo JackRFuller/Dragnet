@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     [SerializeField] Text manaText;
     [SerializeField] Text healthText;
     public LayerMask shootingLayer;
+    [Range(0, 50f)]
+    public float rotDamping;
    
 	// Use this for initialization
 	void Start () {
@@ -120,9 +122,20 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         float z = Input.GetAxis("Vertical");
 
         if (ActiveControlScheme == ControlMethod.Keyboard || ActiveControlScheme == ControlMethod.SingleStick)
-        {   
-            //if(x != 0 || z != 0)
-                transform.rotation = Quaternion.LookRotation(new Vector3(x, 0, z));
+        {
+            if (TargetLockV2.Target == null)
+            {
+                Quaternion _lookDir = Quaternion.LookRotation(new Vector3(x, 0, z));
+                transform.rotation = Quaternion.Slerp(transform.rotation, _lookDir, rotDamping * Time.deltaTime);
+            }
+            else
+            {
+                Vector3 _lookPos = TargetLockV2.Target.transform.position - transform.position;
+                _lookPos.y = transform.position.y;
+                transform.rotation = Quaternion.LookRotation(_lookPos.normalized);
+                transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+
+            }
         }
 
         if (ActiveControlScheme == ControlMethod.TwinStick)

@@ -19,6 +19,7 @@ public class DistanceLogger : MonoBehaviour {
     {
         if (Vector3.Distance(transform.position, PC.transform.position) < range)
         {
+
             if (!added)
             {
                 for (int i = 0; i < targetLock.npcsInView.Count; i++)
@@ -53,7 +54,8 @@ public class DistanceLogger : MonoBehaviour {
                 targetLock.npcsInView.Remove(gameObject);
                 added = false;
             }
-        }     
+        }
+        
 	}
     
     //in Range
