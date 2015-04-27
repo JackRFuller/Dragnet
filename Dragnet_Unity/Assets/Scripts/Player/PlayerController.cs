@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
 
     public WeaponClass weaponClass;
     public PlayerClass playerClass = new PlayerClass(100, 100, 100);
+    public ImpairmentModules impairmentModule = new ImpairmentModules();
     [SerializeField] LineRenderer gunLineRenderer;
     [SerializeField] GameObject lineRendererObject;
     [SerializeField] GameObject Mesh;
@@ -44,12 +45,12 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
 	
 	// Update is called once per frame
 	void Update () {
-
+       
         MovementController();
         SwitchControlScheme();
         ManagePlayerSystems();
-	}
 
+	}
 
     private void ManagePlayerSystems()
     {
@@ -105,6 +106,9 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         {
             TurnOffLineRenderer();
         }
+
+        if(Input.GetAxis("L_Trigger") > 0)
+            impairmentModule.BlastWave(gameObject);
             
 
         if (Input.GetKey("left shift") || Input.GetButton("A") || Input.GetButton("LAP"))
@@ -125,8 +129,11 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         {
             if (TargetLockV2.Target == null)
             {
-                Quaternion _lookDir = Quaternion.LookRotation(new Vector3(x, 0, z));
-                transform.rotation = Quaternion.Slerp(transform.rotation, _lookDir, rotDamping * Time.deltaTime);
+                if ((Mathf.Abs(x + z)) > 0)//stop look rotation warning
+                {
+                    Quaternion _lookDir = Quaternion.LookRotation(new Vector3(x, 0, z));
+                    transform.rotation = Quaternion.Slerp(transform.rotation, _lookDir, rotDamping * Time.deltaTime);
+                }
             }
             else
             {
@@ -215,7 +222,6 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
             }
         }
     }
-
 
     #region Shooting Methods
 
@@ -352,7 +358,6 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
         shieldText.text = "Shield: " + playerClass.Shield;
     }
     #endregion
-
 
     
     void OnGUI()

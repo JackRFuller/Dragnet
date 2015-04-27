@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NpcClass : MonoBehaviour
 {
@@ -35,8 +36,6 @@ public class NpcClass : MonoBehaviour
         RaycastHit hit;
         Vector3 rayDir = target.transform.position - _npc.transform.position;
 
-        Debug.DrawRay(_npc.transform.position, rayDir, Color.red);
-
         if (Physics.Raycast(_npc.transform.position, rayDir, out hit, sightRange))
         {
             if (hit.collider.gameObject.tag == "Player")
@@ -47,6 +46,7 @@ public class NpcClass : MonoBehaviour
 
         return false;
     }
+
 
     public bool CanAttack(GameObject _target, GameObject _npc, float _loseRange, float _attackRange)
     {
@@ -100,5 +100,39 @@ public class NpcClass : MonoBehaviour
         {
             currWaypoint = 0;
         }
+    }
+
+
+    public GameObject FindNewTarget(GameObject _caller)
+    {
+        Collider[] _allColliders = Physics.OverlapSphere(_caller.transform.position, 30f);
+        List<GameObject> _npcsInRange = new List<GameObject>();
+
+        int i = 0;
+        while (i < _allColliders.Length)
+        {
+            if (_allColliders[i].tag == "Enemy" && _allColliders[i].gameObject != _caller)
+            {
+                _npcsInRange.Add(_allColliders[i].gameObject);
+            }
+            i++;
+        }
+
+        if (_allColliders.Length == 0)
+            return null;
+
+        if (_npcsInRange.Count > 0)
+        {
+            _npcsInRange.Sort(delegate(GameObject obj1, GameObject obj2)
+            {
+                return Vector3.Distance(_caller.transform.position, obj1.transform.position).CompareTo
+                    ((Vector3.Distance(_caller.transform.position, obj2.transform.position)));
+            });
+
+            return _npcsInRange[0];
+        }
+        else
+            return null;
+
     }
 }

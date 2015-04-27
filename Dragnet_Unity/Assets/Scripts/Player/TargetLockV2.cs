@@ -38,6 +38,7 @@ public class TargetLockV2 : MonoBehaviour {
                 {
                     HandleTargetCycle();
                 }
+                ManageInput();
             }
 
             if (lockOnObj != null && TargetLockV2.Target != null)
@@ -104,12 +105,79 @@ public class TargetLockV2 : MonoBehaviour {
 
     private void SortRight()
     {
-       npcsInView.Sort(SortToRight);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Collider[] _allColliders = Physics.OverlapSphere(TargetLockV2.Target.transform.position, 50f);
+        List<GameObject> _npcsInRange = new List<GameObject>();
+
+        int i = 0;
+        while (i < _allColliders.Length)
+        {
+            if (_allColliders[i].tag == "Enemy" && _allColliders[i].gameObject != TargetLockV2.Target)
+            {
+                _npcsInRange.Add(_allColliders[i].gameObject);
+            }
+            i++;
+        }
+
+        if (_allColliders.Length == 0)
+            return;
+
+        if (_npcsInRange.Count > 0)
+        {
+            _npcsInRange.Sort(delegate(GameObject obj1, GameObject obj2)
+            {
+                float xDist1 = player.transform.InverseTransformPoint(obj1.transform.position).x;
+                float xDist2 = player.transform.InverseTransformPoint(obj2.transform.position).x;
+
+                if (xDist1 < xDist2)
+                    return 1;
+                if (xDist1 > xDist2)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            TargetLockV2.Target = _npcsInRange[0];
+        }
+
     }
 
     private void SortLeft()
     {
-        npcsInView.Sort(SortToLeft);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Collider[] _allColliders = Physics.OverlapSphere(TargetLockV2.Target.transform.position, 50f);
+        List<GameObject> _npcsInRange = new List<GameObject>();
+
+        int i = 0;
+        while (i < _allColliders.Length)
+        {
+            if (_allColliders[i].tag == "Enemy" && _allColliders[i].gameObject != TargetLockV2.Target)
+            {
+                _npcsInRange.Add(_allColliders[i].gameObject);
+            }
+            i++;
+        }
+
+        if (_allColliders.Length == 0)
+            return;
+
+        if (_npcsInRange.Count > 0)
+        {
+            _npcsInRange.Sort(delegate(GameObject obj1, GameObject obj2)
+            {
+                float xDist1 = player.transform.InverseTransformPoint(obj1.transform.position).x;
+                float xDist2 = player.transform.InverseTransformPoint(obj2.transform.position).x;
+
+                if (xDist1 > xDist2)
+                    return 1;
+                if (xDist1 < xDist2)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            TargetLockV2.Target = _npcsInRange[0];
+        }
     }
 
     int SortListByDistance(GameObject obj1, GameObject obj2)
@@ -130,40 +198,4 @@ public class TargetLockV2 : MonoBehaviour {
             return 0;
     }
 
-    int SortToRight(GameObject obj1, GameObject obj2)
-    {
-        if (obj1 != null && obj2 != null)
-        {
-            float xDist1 = TargetLockV2.Target.transform.InverseTransformPoint(obj1.transform.position).x;
-            float xDist2 = TargetLockV2.Target.transform.InverseTransformPoint(obj2.transform.position).x;
-
-            if (xDist1 > xDist2)
-                return 1;
-            else if (xDist1 < xDist2)
-                return -1;
-            else
-                return 0;
-        }
-        else
-            return -2;
-    }
-
-    int SortToLeft(GameObject obj1, GameObject obj2)
-    {
-        if (obj1 != null && obj2 != null)
-        {
-            float xDist1 = TargetLockV2.Target.transform.InverseTransformPoint(obj1.transform.position).x;
-            float xDist2 = TargetLockV2.Target.transform.InverseTransformPoint(obj2.transform.position).x;
-
-            if (xDist1 < xDist2)
-                return 1;
-            else if (xDist1 > xDist2)
-                return -1;
-            else
-                return 0;
-
-        }
-        else
-            return -2;
-    }
 }

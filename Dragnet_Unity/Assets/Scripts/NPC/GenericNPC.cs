@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GenericNPC : NpcClass, ITakeDamage {
 
@@ -31,8 +32,13 @@ public class GenericNPC : NpcClass, ITakeDamage {
 
             if (!canAttack)
             {
-                navMesh.Resume();
-                navMesh.SetDestination(Player.transform.position);                  
+                bool canSeePC = CanSeePlayer(gameObject, transform.position, Player);
+
+                if (!canSeePC)
+                {
+                    navMesh.Resume();
+                    navMesh.SetDestination(Player.transform.position);
+                }
             }
             else
             {
@@ -54,10 +60,11 @@ public class GenericNPC : NpcClass, ITakeDamage {
         if (health <= 0)
         {
             Player.GetComponent<TargetLockV2>().npcsInView.Remove(gameObject);
+
+            TargetLockV2.Target = FindNewTarget(gameObject);
             Destroy(gameObject);
         }
     }
-
 
 
 	
