@@ -109,6 +109,10 @@ public class TargetLockV2 : MonoBehaviour {
         Collider[] _allColliders = Physics.OverlapSphere(TargetLockV2.Target.transform.position, 50f);
         List<GameObject> _npcsInRange = new List<GameObject>();
 
+
+        if (_allColliders.Length == 0)
+            return;
+
         int i = 0;
         while (i < _allColliders.Length)
         {
@@ -118,9 +122,6 @@ public class TargetLockV2 : MonoBehaviour {
             }
             i++;
         }
-
-        if (_allColliders.Length == 0)
-            return;
 
         if (_npcsInRange.Count > 0)
         {

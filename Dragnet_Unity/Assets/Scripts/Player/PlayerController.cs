@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
     public LayerMask shootingLayer;
     [Range(0, 50f)]
     public float rotDamping;
-   
+    float storeX;
+    float storeZ;
 	// Use this for initialization
 	void Start () {
 
@@ -133,6 +134,20 @@ public class PlayerController : MonoBehaviour, IEditable, ITakeDamage {
                 {
                     Quaternion _lookDir = Quaternion.LookRotation(new Vector3(x, 0, z));
                     transform.rotation = Quaternion.Slerp(transform.rotation, _lookDir, rotDamping * Time.deltaTime);
+                    
+                    storeX = x;
+                    storeZ = z;
+                }
+                else
+                {
+                    if ((Mathf.Abs(storeX + storeZ)) > 0)//stop look rotation warning
+                    {
+                        transform.rotation = Quaternion.LookRotation(new Vector3(storeX, 0, storeZ));
+                    }
+                    else
+                    {
+                        transform.rotation = Quaternion.Euler(Vector3.zero);//if store x or z is zero set the euler to v3.zero to fix warning
+                    }
                 }
             }
             else

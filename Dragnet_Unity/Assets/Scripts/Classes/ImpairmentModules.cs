@@ -27,7 +27,7 @@ public class ImpairmentModules
                 {
                     Vector3 forceDir = hit.collider.transform.position - _caller.transform.position;
                     Rigidbody _npcRigibody = hit.collider.GetComponent<Rigidbody>();
-                    _npcRigibody.AddForce(forceDir * 10f);
+                    _npcRigibody.AddForce(forceDir * 100f, ForceMode.Force);
                 }
             }
 

@@ -17,7 +17,6 @@ public class GenericNPC : NpcClass, ITakeDamage {
         if (!pcSighted)
         {
             bool canSeePC = CanSeePlayer(gameObject, transform.position, Player);
-
             if (canSeePC)
             {
                 pcSighted = true;
@@ -38,6 +37,10 @@ public class GenericNPC : NpcClass, ITakeDamage {
                 {
                     navMesh.Resume();
                     navMesh.SetDestination(Player.transform.position);
+                }
+                else
+                {
+                    ManualMove(gameObject, Player);
                 }
             }
             else

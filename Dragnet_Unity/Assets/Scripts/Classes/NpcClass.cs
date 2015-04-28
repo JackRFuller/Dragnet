@@ -35,9 +35,31 @@ public class NpcClass : MonoBehaviour
     {
         RaycastHit hit;
         Vector3 rayDir = target.transform.position - _npc.transform.position;
-
+        
         if (Physics.Raycast(_npc.transform.position, rayDir, out hit, sightRange))
         {
+           // Debug.DrawRay(_npc.transform.position, rayDir * sightRange, Color.red);
+            if (hit.collider.gameObject.tag == "Player")
+            {
+                return true;
+            }
+        }
+
+        var directionRight = Quaternion.Euler(0,1,0) * rayDir;
+        var directionLeft = Quaternion.Euler(0, -1, 0) * rayDir;
+        
+        if (Physics.Raycast(_npc.transform.position, directionRight, out hit, sightRange))
+        {
+            //Debug.DrawRay(_npc.transform.position, directionRight * sightRange, Color.green);
+            if (hit.collider.gameObject.tag == "Player")
+            {
+                return true;
+            }
+        }
+
+        if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, sightRange))
+        {
+            //Debug.DrawRay(_npc.transform.position, directionLeft * sightRange, Color.green);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -102,6 +124,14 @@ public class NpcClass : MonoBehaviour
         }
     }
 
+    public void ManualMove(GameObject _npc, GameObject _target)
+    {
+        Vector3 moveDir = _target.transform.position - _npc.transform.position;
+        moveDir.y = _npc.transform.position.y;
+        transform.LookAt(_target.transform);
+        Rigidbody _npcRigid = _npc.GetComponent<Rigidbody>();
+        _npcRigid.MovePosition(_npcRigid.position + _npc.transform.forward * 7f * Time.deltaTime);
+    }
 
     public GameObject FindNewTarget(GameObject _caller)
     {
