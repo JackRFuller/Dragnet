@@ -11,7 +11,9 @@ public class NpcClass : MonoBehaviour
         Enraged
     }
     public Behaviours npcBehaviours;
-
+    public bool SHOWATTACKRAYCASTS;
+    public bool SHOWLINEOFSIGHTRAYCASTS;
+    public int damage;
     [Header("How Far The NPC Can See")]
     public float sightRange;
     [Header("When the NPC will lose interested once in chase")]
@@ -29,7 +31,7 @@ public class NpcClass : MonoBehaviour
     [HideInInspector]
     private int currWaypoint;
     public bool pcSighted;
-    private bool canFire = true;
+    protected bool canShoot = true;
 
     public bool CanSeePlayer(GameObject _npc ,Vector3 rayStart, GameObject target)
     {
@@ -38,7 +40,8 @@ public class NpcClass : MonoBehaviour
         
         if (Physics.Raycast(_npc.transform.position, rayDir, out hit, sightRange))
         {
-           // Debug.DrawRay(_npc.transform.position, rayDir * sightRange, Color.red);
+            if (SHOWLINEOFSIGHTRAYCASTS)
+                Debug.DrawRay(_npc.transform.position, rayDir * sightRange, Color.red);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -50,7 +53,8 @@ public class NpcClass : MonoBehaviour
         
         if (Physics.Raycast(_npc.transform.position, directionRight, out hit, sightRange))
         {
-            //Debug.DrawRay(_npc.transform.position, directionRight * sightRange, Color.green);
+            if(SHOWLINEOFSIGHTRAYCASTS)
+                Debug.DrawRay(_npc.transform.position, directionRight * sightRange, Color.green);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -59,7 +63,8 @@ public class NpcClass : MonoBehaviour
 
         if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, sightRange))
         {
-            //Debug.DrawRay(_npc.transform.position, directionLeft * sightRange, Color.green);
+            if (SHOWLINEOFSIGHTRAYCASTS)
+                 Debug.DrawRay(_npc.transform.position, directionLeft * sightRange, Color.green);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -89,20 +94,20 @@ public class NpcClass : MonoBehaviour
         Quaternion _qt_rotation = Quaternion.LookRotation(_target);
         _npc.transform.rotation = Quaternion.Slerp(_npc.transform.rotation, _qt_rotation, Time.deltaTime * 6);
 
-        if (canFire)
+        if (canShoot)
         {
-            canFire = false;
+            canShoot = false;
             GameObject _clone;
             _clone = Instantiate(Bullet, _npc.transform.TransformPoint(Vector3.forward), _npc.transform.rotation) as GameObject;
-            StartCoroutine(ShootingCooldown());
+            StartCoroutine(AttackCooldown());
         }
 
     }
 
-    private IEnumerator ShootingCooldown()
+    protected IEnumerator AttackCooldown()
     {
         yield return new WaitForSeconds(fireCooldown);
-        canFire = true;
+        canShoot = true;
     }
 
     public void Patrol(GameObject _npc)

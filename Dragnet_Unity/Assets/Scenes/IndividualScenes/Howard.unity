@@ -692,6 +692,22 @@ Prefab:
       propertyPath: m_Drag
       value: 2.3599999
       objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: attackRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: SHOWATTACKRAYCASTS
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: fireCooldown
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
   m_IsPrefabParent: 0
@@ -761,6 +777,22 @@ Prefab:
     - target: {fileID: 5415154, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
       propertyPath: m_Drag
       value: 2.3599999
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: attackRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: SHOWATTACKRAYCASTS
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: fireCooldown
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
@@ -845,6 +877,22 @@ Prefab:
     - target: {fileID: 5415154, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
       propertyPath: m_Drag
       value: 2.3599999
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: attackRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: SHOWATTACKRAYCASTS
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: fireCooldown
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
@@ -1005,6 +1053,22 @@ Prefab:
     - target: {fileID: 5415154, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
       propertyPath: m_Drag
       value: 2.3599999
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: attackRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: SHOWATTACKRAYCASTS
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11477980, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
+      propertyPath: fireCooldown
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f2bdbe08f86ee1488a0482899eb2835, type: 2}
