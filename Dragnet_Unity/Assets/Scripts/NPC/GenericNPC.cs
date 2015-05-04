@@ -41,6 +41,7 @@ public class GenericNPC : NpcClass, ITakeDamage {
                 }
                 else
                 {
+                    navMesh.Stop();
                     ManualMove(gameObject, Player);
                 }
             }

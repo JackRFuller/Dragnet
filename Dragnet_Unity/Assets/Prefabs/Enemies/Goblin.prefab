@@ -169,7 +169,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 108844}
   m_LocalRotation: {x: .75157696, y: 0, z: 0, w: .659645498}
-  m_LocalPosition: {x: 0, y: -.409999996, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 496102}
@@ -193,7 +193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198450}
   m_LocalRotation: {x: 0, y: .94800961, z: 0, w: .318241924}
-  m_LocalPosition: {x: 22.8600006, y: 2.9000001, z: 2.88000011}
+  m_LocalPosition: {x: 15.0299997, y: 2.9000001, z: 11.9099998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 417472}
@@ -371,12 +371,12 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 198450}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 5
+  m_Drag: 2.3599999
   m_AngularDrag: 0
   m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
 --- !u!95 &9506044
@@ -440,17 +440,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcBehaviours: 0
+  SHOWATTACKRAYCASTS: 0
+  SHOWLINEOFSIGHTRAYCASTS: 1
+  manualSpeed: 5
+  damage: 1
   sightRange: 15
   loseRange: 20
-  attackRange: 5
+  attackRange: 2
   health: 100
-  fireCooldown: 1
+  fireCooldown: 5
   Player: {fileID: 0}
   Bullet: {fileID: 152372, guid: 3d736a5a4aa9eae4bb7e0b67c0124fa6, type: 2}
   LineOfSightMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  patrolPoints: []
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   navMesh: {fileID: 0}
   pcSighted: 0
 --- !u!114 &11492312
@@ -504,7 +512,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 198450}
   m_Enabled: 1
   m_Radius: .300000012
-  m_Speed: .5
+  m_Speed: 5
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 300

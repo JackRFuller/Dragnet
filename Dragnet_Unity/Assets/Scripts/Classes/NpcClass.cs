@@ -13,6 +13,7 @@ public class NpcClass : MonoBehaviour
     public Behaviours npcBehaviours;
     public bool SHOWATTACKRAYCASTS;
     public bool SHOWLINEOFSIGHTRAYCASTS;
+    public float manualSpeed;
     public int damage;
     [Header("How Far The NPC Can See")]
     public float sightRange;
@@ -33,38 +34,45 @@ public class NpcClass : MonoBehaviour
     public bool pcSighted;
     protected bool canShoot = true;
 
+    ConeEyes eyes;
+    VisionCone visionCone;
+
     public bool CanSeePlayer(GameObject _npc ,Vector3 rayStart, GameObject target)
     {
         RaycastHit hit;
-        Vector3 rayDir = target.transform.position - _npc.transform.position;
-        
-        if (Physics.Raycast(_npc.transform.position, rayDir, out hit, sightRange))
+        Vector3 rayDir = (target.transform.position - _npc.transform.position).normalized;
+        float distance = Vector3.Distance(_npc.transform.position, target.transform.position);
+        Vector3 crossResult = Vector3.Cross(_npc.transform.position, (rayDir * distance));
+
+
+        if (Physics.Raycast(_npc.transform.position, rayDir, out hit, distance))
         {
             if (SHOWLINEOFSIGHTRAYCASTS)
-                Debug.DrawRay(_npc.transform.position, rayDir * sightRange, Color.red);
+                Debug.DrawRay(_npc.transform.position, rayDir * distance, Color.red);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
             }
         }
 
-        var directionRight = Quaternion.Euler(0,1,0) * rayDir;
-        var directionLeft = Quaternion.Euler(0, -1, 0) * rayDir;
-        
-        if (Physics.Raycast(_npc.transform.position, directionRight, out hit, sightRange))
+
+        var directionRight = (rayDir * distance) + crossResult.normalized * 0.5f;
+        var directionLeft = (rayDir * distance) + crossResult.normalized * -0.5f;
+
+        if (Physics.Raycast(_npc.transform.position, directionRight, out hit, distance))
         {
             if(SHOWLINEOFSIGHTRAYCASTS)
-                Debug.DrawRay(_npc.transform.position, directionRight * sightRange, Color.green);
+                Debug.DrawRay(_npc.transform.position, directionRight, Color.green);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
             }
         }
 
-        if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, sightRange))
+        if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, distance))
         {
             if (SHOWLINEOFSIGHTRAYCASTS)
-                 Debug.DrawRay(_npc.transform.position, directionLeft * sightRange, Color.green);
+                Debug.DrawRay(_npc.transform.position, directionLeft, Color.green);
             if (hit.collider.gameObject.tag == "Player")
             {
                 return true;
@@ -74,6 +82,12 @@ public class NpcClass : MonoBehaviour
         return false;
     }
 
+    Vector3 GetNormal(Vector3 a, Vector3 b, Vector3 c)
+    {
+        Vector3 side1 = b - a;
+        Vector3 side2 = c - a;
+        return Vector3.Cross(side1, side2).normalized;
+    }
 
     public bool CanAttack(GameObject _target, GameObject _npc, float _loseRange, float _attackRange)
     {
@@ -135,7 +149,7 @@ public class NpcClass : MonoBehaviour
         moveDir.y = _npc.transform.position.y;
         transform.LookAt(_target.transform);
         Rigidbody _npcRigid = _npc.GetComponent<Rigidbody>();
-        _npcRigid.MovePosition(_npcRigid.position + _npc.transform.forward * 7f * Time.deltaTime);
+        _npcRigid.MovePosition(_npcRigid.position + _npc.transform.forward * manualSpeed * Time.deltaTime);
     }
 
     public GameObject FindNewTarget(GameObject _caller)
@@ -169,5 +183,27 @@ public class NpcClass : MonoBehaviour
         else
             return null;
 
+    }
+
+    public void ConeLightOfSight()
+    {
+        bool playerInView = false;
+
+        foreach (RaycastHit hit in eyes.hits)
+        {
+            if (hit.transform && hit.transform.tag == "Player")
+            {
+                playerInView = true;
+            }
+        }
+
+        if (playerInView)
+        {
+            visionCone.status = VisionCone.Status.Alert;
+        }
+        else
+        {
+            visionCone.status = VisionCone.Status.Idle;
+        }
     }
 }
