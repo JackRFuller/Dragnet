@@ -42,44 +42,54 @@ public class NpcClass : MonoBehaviour
         RaycastHit hit;
         Vector3 rayDir = (target.transform.position - _npc.transform.position).normalized;
         float distance = Vector3.Distance(_npc.transform.position, target.transform.position);
-        Vector3 crossResult = Vector3.Cross(_npc.transform.position, (rayDir * distance));
 
-
-        if (Physics.Raycast(_npc.transform.position, rayDir, out hit, distance))
+        if (distance < sightRange)
         {
-            if (SHOWLINEOFSIGHTRAYCASTS)
-                Debug.DrawRay(_npc.transform.position, rayDir * distance, Color.red);
-            if (hit.collider.gameObject.tag == "Player")
+            Vector3 crossResult = Vector3.Cross(_npc.transform.position, (rayDir * distance));
+
+            if (Physics.Raycast(_npc.transform.position, rayDir, out hit, distance))
             {
-                return true;
+                if (SHOWLINEOFSIGHTRAYCASTS)
+                    Debug.DrawRay(_npc.transform.position, rayDir * distance, Color.red);
+                if (hit.collider.gameObject.tag == "Player")
+                {
+                    return true;
+                }
             }
+
+
+            var directionRight = (rayDir * distance) + crossResult.normalized * 0.5f;
+            var directionLeft = (rayDir * distance) + crossResult.normalized * -0.5f;
+
+            if (Physics.Raycast(_npc.transform.position, directionRight, out hit, distance))
+            {
+                if (hit.collider.gameObject.tag == "Player")
+                {
+                    return true;
+                }
+
+                if (SHOWLINEOFSIGHTRAYCASTS)
+                    Debug.DrawRay(_npc.transform.position, directionRight, Color.green);
+            }
+
+            if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, distance))
+            {
+                if (hit.collider.gameObject.tag == "Player")
+                {
+                    return true;
+                }
+
+                if (SHOWLINEOFSIGHTRAYCASTS)
+                    Debug.DrawRay(_npc.transform.position, directionLeft, Color.green);
+            }
+
+            return false;
         }
-
-
-        var directionRight = (rayDir * distance) + crossResult.normalized * 0.5f;
-        var directionLeft = (rayDir * distance) + crossResult.normalized * -0.5f;
-
-        if (Physics.Raycast(_npc.transform.position, directionRight, out hit, distance))
+        else
         {
-            if(SHOWLINEOFSIGHTRAYCASTS)
-                Debug.DrawRay(_npc.transform.position, directionRight, Color.green);
-            if (hit.collider.gameObject.tag == "Player")
-            {
-                return true;
-            }
+            return false;
         }
-
-        if (Physics.Raycast(_npc.transform.position, directionLeft, out hit, distance))
-        {
-            if (SHOWLINEOFSIGHTRAYCASTS)
-                Debug.DrawRay(_npc.transform.position, directionLeft, Color.green);
-            if (hit.collider.gameObject.tag == "Player")
-            {
-                return true;
-            }
-        }
-
-        return false;
+       
     }
 
     Vector3 GetNormal(Vector3 a, Vector3 b, Vector3 c)
@@ -126,7 +136,7 @@ public class NpcClass : MonoBehaviour
 
     public void Patrol(GameObject _npc)
     {
-        if (currWaypoint < patrolPoints.Length)
+        if (currWaypoint < patrolPoints.Length && patrolPoints[currWaypoint] != null)
         {
             Vector3 targetPos = patrolPoints[currWaypoint].position;
             targetPos.y = _npc.transform.position.y;

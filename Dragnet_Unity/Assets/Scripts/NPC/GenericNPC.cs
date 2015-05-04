@@ -58,7 +58,10 @@ public class GenericNPC : NpcClass, ITakeDamage {
             }
 
             if (_distance > loseRange)
+            {
                 pcSighted = false;
+                navMesh.Stop();
+            }
         }
 
     }
