@@ -9,11 +9,15 @@ public class HUBWorld_Manager : MonoBehaviour
 	{
 		Login,
 		MainMenu,
+		LevelSelect,
+        Abilities,
 	};
 
 	public MenuMode CurrentMenuMode;
 
     #region LogIn
+	
+	
 
 	[Header("Login Variables")]
 	[SerializeField] bool UsernameGenerated = false;
@@ -38,10 +42,27 @@ public class HUBWorld_Manager : MonoBehaviour
     [SerializeField] Text Weather;  
 
     #endregion
+	
+	#region LevelSelect
+	
+	[Header("Level Select Variables")]
+	[SerializeField] GameObject LevelSelectItems;
+	
+	
+	#endregion
+
+    #region Abilities
+    [Header("Ability Menu Variables")]
+    [SerializeField] bool WedgeActive;
+    [SerializeField] GameObject AbilityMenuItems;
+    [SerializeField] int AbilityWedgeID;
+    [SerializeField] GameObject[] AbilityWedge;
+
+    #endregion
 
     // Use this for initialization
-	void Start () {		
-
+	void Start () {			
+			
         Buttons[Button_ID].GetComponent<Animation>().Play("BigButton_Grow");
         Buttons[Button_ID].transform.FindChild("Highlight").GetComponent<Image>().enabled = true;
 
@@ -67,7 +88,112 @@ public class HUBWorld_Manager : MonoBehaviour
 		{
 			MainMenu();
 		}
+		
+		if(CurrentMenuMode == MenuMode.LevelSelect)
+		{
+			LevelSelect();
+		}
+
+        if (CurrentMenuMode == MenuMode.Abilities)
+        {
+            ManageAbilityMenu();
+        }
 	}
+
+    #region Abilties
+
+    void ManageAbilityMenu()
+    {
+        if (WedgeActive)
+        {
+            if (Input.GetButtonUp("B") || Input.GetButtonUp("Fire1"))
+            {
+                DeactivateWedge();
+            }
+        }
+
+        if (Input.GetButtonUp("A") || Input.GetButtonUp("Submit"))
+        {
+            if (!WedgeActive)
+            {
+                ActivateWedge();
+                WedgeActive = true;
+            }
+        }
+
+        if (!WedgeActive)
+        {
+            if (Input.GetButtonUp("B") || Input.GetButtonUp("Fire1"))
+            {
+                AbilityMenuItems.GetComponent<Animation>().Play("AbilityOut");
+                CurrentMenuMode = MenuMode.MainMenu;
+            }
+
+            if (!buttonPressed)
+            {
+                if (Input.GetAxis("Horizontal") > 0.1)
+                {
+                    int previousID = AbilityWedgeID;
+                    AbilityWedgeID += 1;
+                    if (AbilityWedgeID == AbilityWedge.Length)
+                    {
+                        AbilityWedgeID = 0;
+                    }
+                    MoveToSelector(previousID);
+                    buttonPressed = true;
+                    StartCoroutine(PauseBetweenPress());
+                }
+
+                if (Input.GetAxis("Horizontal") < -0.1)
+                {
+                    int previousID = AbilityWedgeID;
+                    AbilityWedgeID -= 1;
+                    if (AbilityWedgeID == -1)
+                    {
+                        AbilityWedgeID = AbilityWedge.Length - 1;
+                    }
+                    MoveToSelector(previousID);
+                    buttonPressed = true;
+                    StartCoroutine(PauseBetweenPress());
+                }
+            }        
+        }       
+    }
+
+    void DeactivateWedge()
+    {
+
+    }
+
+    void ActivateWedge()
+    {
+        
+    }
+
+    void MoveToSelector(int PreviousID)
+    {
+        AbilityWedge[PreviousID].transform.FindChild("Selector").GetComponent<Image>().enabled = false;
+        AbilityWedge[AbilityWedgeID].transform.FindChild("Selector").GetComponent<Image>().enabled = true;
+    }
+
+    
+
+
+    #endregion
+
+    #region LevelSelect
+
+    void LevelSelect()
+	{
+		if(Input.GetButtonUp("B") || Input.GetButtonUp("Fire1"))
+		{	
+			LevelSelectItems.GetComponent<Animation>().Play("LevelSelectOut");
+			CurrentMenuMode = MenuMode.MainMenu;
+		}	
+	}
+	
+	
+	#endregion
 
 	#region MainMenu
 
@@ -99,12 +225,16 @@ public class HUBWorld_Manager : MonoBehaviour
         {
             case 0:
                 Debug.Log("Gallery");
+				LevelSelectItems.GetComponent<Animation>().Play("LevelSelectIn");
+				CurrentMenuMode = MenuMode.LevelSelect;
                 break;
             case 1:
                 Debug.Log("Message Board");
                 break;
             case 2:
                 Debug.Log("Abilties");
+                AbilityMenuItems.GetComponent<Animation>().Play("AbilityIn");
+                CurrentMenuMode = MenuMode.Abilities;
                 break;
             case 3:
                 Debug.Log("Options");
